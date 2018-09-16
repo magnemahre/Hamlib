@@ -278,7 +278,7 @@ DECLARE_INITROT_BACKEND(gs232a)
     rot_register(&gs232b_rot_caps);
     rot_register(&gs232_rot_caps);
     rot_register(&f1tetracker_rot_caps);
-
+    rot_register(&gs232_12pr1a_rot_caps);
 	return RIG_OK;
 }
 

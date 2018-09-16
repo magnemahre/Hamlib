@@ -233,6 +233,37 @@ gs232b_rot_move(ROT *rot, int direction, int speed)
     return RIG_OK;
 }
 
+static int
+gs232b_12pr1a_rot_get_position(ROT *rot, azimuth_t *az, elevation_t *el)
+{
+    char posbuf[32];
+    int retval, int_az;
+
+    rig_debug(RIG_DEBUG_TRACE, "%s called\n", __FUNCTION__);
+
+    retval = gs232b_transaction(rot, "C" EOM, posbuf, sizeof(posbuf));
+    if (retval != RIG_OK || strlen(posbuf) < 10) {
+        return retval < 0 ? retval : -RIG_EPROTO;
+    }
+
+    /* parse "AZ=aaa" */
+
+    /* With the format string containing a space character as one of the
+     * directives, any amount of space is matched, including none in the input.
+     */
+    if (sscanf(posbuf, "AZ=%d", &int_az) != 1) {
+        rig_debug(RIG_DEBUG_ERR, "%s: wrong reply '%s'\n", __FUNCTION__, posbuf);
+        return -RIG_EPROTO;
+    }
+    *az = (azimuth_t)int_az;
+    *el = (elevation_t) 0.0;
+
+    rig_debug(RIG_DEBUG_TRACE, "%s: (az, el) = (%.1f, %.1f)\n",
+		   __FUNCTION__, *az, *el);
+
+    return RIG_OK;
+}
+
 /* ************************************************************************* */
 /*
  * Generic GS232B rotator capabilities.
@@ -268,6 +299,40 @@ const struct rot_caps gs232b_rot_caps = {
   .stop = 	       gs232b_rot_stop,
   .move =          gs232b_rot_move,
 };
+
+/*
+ * Portable Rotation Inc. 12PR1A rotator capabilities
+ */
+
+const struct rot_caps gs232_12pr1a_rot_caps = {
+  .rot_model =      ROT_MODEL_12PR1A,
+  .model_name =     "GS-232/12PR1A",
+  .mfg_name =       "Portable Rotation Inc.",
+  .version =        "0.1",
+  .copyright = 	    "LGPL",
+  .status =         RIG_STATUS_ALPHA,
+  .rot_type =       ROT_TYPE_AZIMUTH,
+  .port_type =      RIG_PORT_SERIAL,
+  .serial_rate_min =   150,
+  .serial_rate_max =   9600,
+  .serial_data_bits =  8,
+  .serial_stop_bits =  1,
+  .serial_parity =  RIG_PARITY_NONE,
+  .serial_handshake =  RIG_HANDSHAKE_NONE,
+  .write_delay =  0,
+  .post_write_delay =  0,
+  .timeout =  400,
+  .retry =  3,
+
+  .min_az = 	0.0,
+  .max_az =  	360.0,
+
+  .get_position =  gs232b_12pr1a_rot_get_position,
+  .set_position =  gs232b_rot_set_position,
+  .stop = 	       gs232b_rot_stop,
+  .move =          gs232b_rot_move,
+}; 
+
 
 /* end of file */
 

@@ -197,12 +197,20 @@
  *  The F1TETRACKER backend can be used with rotators that support the
  *  F1TETRACKER protocol.
  */
+/**
+ *  \def ROT_MODEL_12PR1A
+ *  \brief A macro that returns the model number of the GS-232/12PR1A backend.
+ *
+ *  The GS-232/12PR1A backend can be used with rotators that support the
+ *  GS-232/12PR1A protocol.
+ */
 #define ROT_GS232A 6
 #define ROT_BACKEND_GS232A "gs232a"
 #define ROT_MODEL_GS232A ROT_MAKE_MODEL(ROT_GS232A, 1)
 #define ROT_MODEL_GS232 ROT_MAKE_MODEL(ROT_GS232A, 2) /* Not A or B */
 #define ROT_MODEL_GS232B ROT_MAKE_MODEL(ROT_GS232A, 3)
 #define ROT_MODEL_F1TETRACKER ROT_MAKE_MODEL(ROT_GS232A, 4)
+#define ROT_MODEL_12PR1A ROT_MAKE_MODEL(ROT_GS232A, 5)
 
 
 /**
